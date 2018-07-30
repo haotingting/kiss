@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjtachao.fish.kiss.manage.mapper.KissDeviceMapper" >
+    <resultMap id="deviceResultMap" type="com.zjtachao.fish.kiss.common.bean.domain.KissDevice" >
+        <id column="ID" property="id" />
+        <result column="DEVICE_CODE" property="deviceCode"  />
+        <result column="DEVICE_SERIAL_NUMBER" property="deviceSerialNumber"  />
+        <result column="SITE_CODE" property="siteCode" />
+        <result column="SITE_NAME" property="siteName" />
+        <result column="DEVICE_NAME" property="deviceName"  />
+        <result column="DEVICE_MODE" property="deviceMode"  />
+        <result column="DEVICE_STATUS" property="deviceStatus"  />
+        <result column="REMARK" property="remark"  />
+        <result column="CREATE_TIME" property="createTime"  />
+        <result column="CREATE_ID" property="createId"  />
+        <result column="MODIFY_TIME" property="modifyTime"  />
+        <result column="MODIFY_ID" property="modifyId"  />
+        <result column="DELETE_FLAG" property="deleteFlag"  />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        ID, DEVICE_CODE, DEVICE_SERIAL_NUMBER , SITE_CODE, DEVICE_NAME, DEVICE_MODE , DEVICE_STATUS , REMARK,CREATE_TIME , CREATE_ID , MODIFY_TIME , MODIFY_ID ,DELETE_FLAG
+    </sql>
+
+    <select id="queryDeviceByCode" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissDeviceSo" resultMap="deviceResultMap" >
+        SELECT
+        (SELECT s.SITE_NAME FROM KF_SITE s WHERE 1=1 and s.SITE_CODE = t.SITE_CODE) AS SITE_NAME ,
+        <include refid="Base_Column_List" />
+        FROM KF_DEVICE t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        AND t.DEVICE_CODE = #{deviceCode}
+    </select>
+
+
+    <select id="queryDeviceBySerialNumber" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissDeviceSo" resultMap="deviceResultMap" >
+        SELECT
+        (SELECT s.SITE_NAME FROM KF_SITE s WHERE 1=1 and s.SITE_CODE = t.SITE_CODE) AS SITE_NAME ,
+        <include refid="Base_Column_List" />
+        FROM KF_DEVICE t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        AND t.DEVICE_SERIAL_NUMBER = #{deviceSerialNumber}
+    </select>
+
+    <select id="queryDeviceCount" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissDeviceSo" a >
+        SELECT
+            COUNT(*)
+        FROM KF_DEVICE t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        <if test="deviceCode != null and deviceCode != ''" >
+            AND t.DEVICE_CODE = #{deviceCode}
+        </if>
+        <if test="deviceSerialNumber != null and deviceSerialNumber != ''" >
+            AND t.DEVICE_SERIAL_NUMBER = #{deviceSerialNumber}
+        </if>
+        <if test="siteCode != null and siteCode != ''" >
+            AND t.SITE_CODE = #{siteCode}
+        </if>
+        <if test="deviceName != null and deviceName != ''" >
+            AND t.DEVICE_NAME LIKE CONCAT(CONCAT('%', #{deviceName}), '%')
+        </if>
+        <if test="deviceStatus != null and deviceStatus != ''" >
+            AND t.DEVICE_STATUS = #{deviceStatus}
+        </if>
+    </select>
+
+    <select id="queryDeviceList" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissDeviceSo" resultMap="deviceResultMap" >
+        SELECT
+        (SELECT s.SITE_NAME FROM KF_SITE s WHERE 1=1 and s.SITE_CODE = t.SITE_CODE) AS SITE_NAME ,
+        <include refid="Base_Column_List" />
+        FROM KF_DEVICE t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        <if test="deviceCode != null and deviceCode != ''" >
+            AND t.DEVICE_CODE = #{deviceCode}
+        </if>
+        <if test="deviceSerialNumber != null and deviceSerialNumber != ''" >
+            AND t.DEVICE_SERIAL_NUMBER = #{deviceSerialNumber}
+        </if>
+        <if test="siteCode != null and siteCode != ''" >
+            AND t.SITE_CODE = #{siteCode}
+        </if>
+        <if test="deviceName != null and deviceName != ''" >
+            AND t.DEVICE_NAME LIKE  CONCAT(CONCAT('%', #{deviceName}), '%')
+        </if>
+        <if test="deviceStatus != null and deviceStatus != ''" >
+            AND t.DEVICE_STATUS = #{deviceStatus}
+        </if>
+        ORDER BY t.MODIFY_TIME DESC,t.CREATE_TIME DESC
+        <if test="startNum != null and pageSize != null">
+            LIMIT #{startNum},#{pageSize}
+        </if>
+    </select>
+
+    <insert id="addDevice" parameterType="com.zjtachao.fish.kiss.common.bean.domain.KissDevice" >
+        INSERT INTO
+        KF_DEVICE(DEVICE_CODE , DEVICE_SERIAL_NUMBER , SITE_CODE , DEVICE_NAME , DEVICE_MODE , DEVICE_STATUS , REMARK , CREATE_TIME  , MODIFY_TIME , DELETE_FLAG)
+        VALUES
+        (#{deviceCode} , #{deviceSerialNumber} , #{siteCode} , #{deviceName} , #{deviceMode}  , #{deviceStatus} , #{remark}, #{createTime} , #{modifyTime} , #{deleteFlag})
+    </insert>
+
+    <update id="updateDevice" parameterType="com.zjtachao.fish.kiss.common.bean.domain.KissDevice" >
+        UPDATE
+          KF_DEVICE
+        SET
+          DEVICE_SERIAL_NUMBER = #{deviceSerialNumber} ,
+          SITE_CODE = #{siteCode},
+          DEVICE_NAME = #{deviceName} ,
+          DEVICE_MODE = #{deviceMode} ,
+          REMARK = #{remark} ,
+          MODIFY_TIME = #{modifyTime}
+        WHERE 1=1
+        AND DEVICE_CODE = #{deviceCode}
+        AND DELETE_FLAG = #{deleteFlag}
+    </update>
+
+    <update id="updateDeviceStatus" parameterType="com.zjtachao.fish.kiss.common.bean.domain.KissDevice" >
+        UPDATE
+        KF_DEVICE
+        SET
+        DEVICE_STATUS = #{deviceStatus},
+        MODIFY_TIME = #{modifyTime}
+        WHERE 1=1
+        AND DEVICE_CODE = #{deviceCode}
+        AND DELETE_FLAG = #{deleteFlag}
+    </update>
+
+    <update id="deleteDevice" parameterType="com.zjtachao.fish.kiss.common.bean.domain.KissDevice" >
+        UPDATE
+        KF_DEVICE
+        SET
+          DELETE_FLAG = #{deleteFlag},
+          MODIFY_TIME = #{modifyTime}
+        WHERE 1=1
+        AND DEVICE_CODE = #{deviceCode}
+    </update>
+
+
+
+</mapper>

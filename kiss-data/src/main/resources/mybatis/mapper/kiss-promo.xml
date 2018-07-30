@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjtachao.fish.kiss.data.mapper.KissPromoMapper" >
+    <resultMap id="promoResultMap" type="com.zjtachao.fish.kiss.common.bean.domain.KissPromo" >
+        <id column="ID" property="id" />
+        <result column="PROMO_CODE" property="promoCode"  />
+        <result column="SITE_CODE" property="siteCode"  />
+        <result column="GOODS_CODE" property="goodsCode"  />
+        <result column="START_TIME" property="startTime"  />
+        <result column="END_TIME" property="endTime" />
+        <result column="PROMO_STATUS" property="promoStatus"  />
+        <result column="USE_TIME" property="useTime"  />
+        <result column="USE_CODE" property="useCode"  />
+        <result column="CREATE_TIME" property="createTime"  />
+        <result column="CREATE_ID" property="createId"  />
+        <result column="MODIFY_TIME" property="modifyTime"  />
+        <result column="MODIFY_ID" property="modifyId"  />
+        <result column="DELETE_FLAG" property="deleteFlag"  />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        ID, PROMO_CODE , SITE_CODE, GOODS_CODE , START_TIME, END_TIME, PROMO_STATUS , USE_TIME , USE_CODE ,CREATE_TIME , CREATE_ID , MODIFY_TIME , MODIFY_ID ,DELETE_FLAG
+    </sql>
+
+
+    <select id="queryPromoByCode" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissPromoSo" resultMap="promoResultMap" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM KF_PROMO t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        AND t.PROMO_CODE = #{promoCode}
+    </select>
+
+    <update id="updatePromoStatus" parameterType="com.zjtachao.fish.kiss.common.bean.domain.KissPromo" >
+        UPDATE
+        KF_PROMO
+        SET
+          PROMO_STATUS = #{promoStatus},
+          USE_TIME = #{useTime},
+          USE_CODE = #{useCode},
+          MODIFY_TIME = #{modifyTime}
+        WHERE 1=1
+        AND PROMO_CODE = #{promoCode}
+    </update>
+
+
+
+</mapper>

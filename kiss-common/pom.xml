@@ -1,0 +1,32 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.zjtachao.fish.kiss</groupId>
+  <artifactId>kiss-common</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0.0</version>
+  <name>kiss-common</name>
+  <parent>
+    <artifactId>water-boot-starter-parent</artifactId>
+    <groupId>com.zjtachao.fish.water</groupId>
+    <version>1.0.0</version>
+  </parent>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <java.version>1.8</java.version>
+
+    <com.zjtachao.fish.water.boot.stater.common.version>1.0.0</com.zjtachao.fish.water.boot.stater.common.version>
+
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.zjtachao.fish.water</groupId>
+      <artifactId>water-boot-starter-common</artifactId>
+      <version>${com.zjtachao.fish.water.boot.stater.common.version}</version>
+    </dependency>
+  </dependencies>
+  
+</project>

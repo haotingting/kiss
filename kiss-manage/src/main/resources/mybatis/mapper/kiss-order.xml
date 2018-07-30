@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjtachao.fish.kiss.manage.mapper.KissOrderMapper" >
+    <resultMap id="orderResultMap" type="com.zjtachao.fish.kiss.common.bean.domain.KissOrder" >
+        <id column="ID" property="id" />
+        <result column="ORDER_NUMBER" property="orderNumber"  />
+        <result column="ORDER_TIME" property="orderTime"  />
+        <result column="STIE_CODE" property="stieCode" />
+        <result column="STIE_NAME" property="stieName" />
+        <result column="DEVICE_CODE" property="deviceCode"  />
+        <result column="DEVICE_SERIAL_NUMBER" property="deviceSerialNumber"  />
+        <result column="DEVICE_NAME" property="deviceName" />
+        <result column="PAY_WAY" property="payWay"  />
+        <result column="PAY_SOURCE" property="paySource"  />
+
+        <result column="PAY_NUMBER" property="payNumber"  />
+        <result column="PAY_CURRENCY" property="payCurrency"  />
+        <result column="PAY_GOODS" property="payGoods"  />
+        <result column="PAY_AMOUNT" property="payAmount"  />
+        <result column="PAY_QUANTITY" property="payQuantity"  />
+        <result column="PAY_TITLE" property="payTitle"  />
+        <result column="PAY_DESC" property="payDesc"  />
+        <result column="PAY_REMARK" property="payRemark"  />
+        <result column="PAY_STATUS" property="payStatus"  />
+        <result column="PAY_TIME" property="payTime"  />
+        <result column="PAY_BUYER_CODE" property="payBuyerCode"  />
+        <result column="PAY_BUYER_NAME" property="payBuyerName"  />
+        <result column="PAY_SELLER_CODE" property="paySellerCode"  />
+        <result column="PAY_SELLER_NAME" property="paySellerName"  />
+        <result column="ORDER_REMARK" property="orderRemark"  />
+
+        <result column="CREATE_TIME" property="createTime"  />
+        <result column="CREATE_ID" property="createId"  />
+        <result column="MODIFY_TIME" property="modifyTime"  />
+        <result column="MODIFY_ID" property="modifyId"  />
+        <result column="DELETE_FLAG" property="deleteFlag"  />
+    </resultMap>
+
+    <resultMap id="orderStaMap" type="com.zjtachao.fish.kiss.common.bean.ro.KissStaOrderRo">
+        <result column="ORDER_TIME" property="periodDay"  />
+        <result column="GOODS_CODE" property="goodsCode"  />
+        <result column="SITE_CODE" property="siteCode"  />
+        <result column="DEVICE_SERIAL_NUMBER" property="deviceSerialNumber"  />
+        <result column="PAY_WAY" property="payWay"  />
+        <result column="TOTAL_AMOUNT" property="totalAmount"  />
+        <result column="TOTAL_COUNT" property="totalCount"  />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        ID, ORDER_NUMBER, ORDER_TIME , STIE_CODE, DEVICE_CODE,DEVICE_SERIAL_NUMBER,
+        (SELECT a.DEVICE_NAME FROM KF_DEVICE a WHERE 1=1 AND a.DEVICE_CODE = t.DEVICE_CODE) DEVICE_NAME,
+        (SELECT a.SITE_NAME FROM KF_SITE a WHERE 1=1 AND a.SITE_CODE = t.STIE_CODE) STIE_NAME,
+        PAY_WAY , PAY_SOURCE,
+        PAY_NUMBER,PAY_CURRENCY,PAY_GOODS,PAY_AMOUNT,PAY_QUANTITY,PAY_TITLE,
+        PAY_DESC,PAY_REMARK,PAY_STATUS,PAY_TIME,PAY_BUYER_CODE,PAY_BUYER_NAME,
+        PAY_SELLER_CODE,PAY_SELLER_NAME,ORDER_REMARK,
+        CREATE_TIME , CREATE_ID , MODIFY_TIME , MODIFY_ID ,DELETE_FLAG
+    </sql>
+
+    <select id="queryOrderByCode" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissOrderSo" resultMap="orderResultMap"  statementType="STATEMENT" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM KF_ORDER_${tbDate} t
+        WHERE 1=1
+        AND t.DELETE_FLAG = ${deleteFlag}
+        AND t.ORDER_NUMBER = ${orderNumber}
+    </select>
+
+    <select id="queryOrderCount" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissOrderSo" resultType="java.lang.Long" >
+        SELECT
+            COUNT(*)
+        FROM KF_ORDER_${tbDate} t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        <if test="startTime != null " >
+            AND t.ORDER_TIME &gt;= #{startTime}
+        </if>
+        <if test="endTime != null " >
+            AND t.ORDER_TIME &lt;= #{endTime}
+        </if>
+        <if test="orderNumber != null and orderNumber != ''" >
+            AND t.ORDER_NUMBER = #{orderNumber}
+        </if>
+        <if test="payNumber != null and payNumber != ''" >
+            AND t.PAY_NUMBER = #{payNumber}
+        </if>
+        <if test="stieCode != null and stieCode != ''" >
+            AND t.STIE_CODE = #{stieCode}
+        </if>
+        <if test="deviceSerialNumber != null and deviceSerialNumber != ''" >
+            AND t.DEVICE_SERIAL_NUMBER = #{deviceSerialNumber}
+        </if>
+        <if test="deviceCode != null and deviceCode != ''" >
+            AND t.DEVICE_CODE = #{deviceCode}
+        </if>
+        <if test="payStatus != null and payStatus != ''" >
+            AND t.PAY_STATUS = #{payStatus}
+        </if>
+    </select>
+
+    <select id="queryOrderList" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissOrderSo" resultMap="orderResultMap" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM KF_ORDER_${tbDate} t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        <if test="startTime != null " >
+            AND t.ORDER_TIME &gt;= #{startTime}
+        </if>
+        <if test="endTime != null " >
+            AND t.ORDER_TIME &lt;= #{endTime}
+        </if>
+        <if test="orderNumber != null and orderNumber != ''" >
+            AND t.ORDER_NUMBER = #{orderNumber}
+        </if>
+        <if test="payNumber != null and payNumber != ''" >
+            AND t.PAY_NUMBER = #{payNumber}
+        </if>
+        <if test="stieCode != null and stieCode != ''" >
+            AND t.STIE_CODE = #{stieCode}
+        </if>
+        <if test="deviceCode != null and deviceCode != ''" >
+            AND t.DEVICE_CODE = #{deviceCode}
+        </if>
+        <if test="deviceSerialNumber != null and deviceSerialNumber != ''" >
+            AND t.DEVICE_SERIAL_NUMBER = #{deviceSerialNumber}
+        </if>
+        <if test="payStatus != null and payStatus != ''" >
+            AND t.PAY_STATUS = #{payStatus}
+        </if>
+        ORDER BY t.MODIFY_TIME DESC,t.CREATE_TIME DESC
+        <if test="startNum != null and pageSize != null">
+            LIMIT #{startNum},#{pageSize}
+        </if>
+    </select>
+
+    <select id="queryStaOrderList" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissOrderSo" resultMap="orderStaMap">
+        SELECT
+          PAY_GOODS AS GOODS_CODE , STIE_CODE AS SITE_CODE, DEVICE_SERIAL_NUMBER, PAY_WAY, SUM(t.PAY_AMOUNT) AS  TOTAL_AMOUNT , COUNT(*) AS TOTAL_COUNT
+        FROM KF_ORDER_${tbDate} t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        AND t.ORDER_TIME &gt;= #{startTime}
+        AND t.ORDER_TIME &lt; #{endTime}
+        AND t.PAY_STATUS = #{payStatus}
+        GROUP BY t.PAY_GOODS , t.STIE_CODE , t.DEVICE_SERIAL_NUMBER , t.PAY_WAY
+
+    </select>
+
+    <select id="queryStaOrderRealTimeList" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissOrderSo" resultMap="orderStaMap">
+        SELECT
+        DATE_FORMAT(t.ORDER_TIME,'%H') AS ORDER_TIME , SUM(t.PAY_AMOUNT) AS  TOTAL_AMOUNT , COUNT(*) AS TOTAL_COUNT
+        FROM KF_ORDER_${tbDate} t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        AND t.ORDER_TIME &gt;= #{startTime}
+        AND t.ORDER_TIME &lt; #{endTime}
+        AND t.PAY_STATUS = #{payStatus}
+        <if test="stieCode != null and stieCode != ''" >
+            AND t.STIE_CODE = #{stieCode}
+        </if>
+        <if test="goodsCode != null and goodsCode != ''" >
+            AND t.PAY_GOODS = #{goodsCode}
+        </if>
+        <if test="deviceSerialNumber != null and deviceSerialNumber != ''" >
+            AND t.DEVICE_SERIAL_NUMBER = #{deviceSerialNumber}
+        </if>
+        <if test="payWay != null and payWay != ''" >
+            AND t.PAY_WAY = #{payWay}
+        </if>
+        GROUP BY DATE_FORMAT(t.ORDER_TIME,'%H')
+
+    </select>
+
+
+</mapper>

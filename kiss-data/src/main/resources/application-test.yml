@@ -1,0 +1,57 @@
+server:
+  port: 8080
+  context-path: /kiss/data
+
+spring:
+  redis:
+    database: 0
+    host: 192.168.1.12
+    port: 6379
+    password: zjtachao
+    pool:
+      max-active: 20
+      max-idle: 10
+      max-wait: 100
+      min-idle: 1
+
+  datasource:
+    url: jdbc:mysql://192.168.1.11:3306/fish?useUnicode=true&characterEncoding=UTF-8
+    username: zjtachao
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 1
+      max-active: 10
+      min-idle: 1
+      max-wait: 50
+
+mybatis:
+  type-aliases-package: com.zjtachao.fish
+  config-location: classpath:mybatis/mybatis-config.xml
+  mapper-locations: classpath:mybatis/mapper/*.xml
+
+
+com:
+  zjtachao:
+    fish:
+      kiss:
+        data:
+          normal:
+            param:
+              min-date: 201801
+          program:
+            qrlocalpath: /data/qrimg
+            qrrelativeurl: http://192.168.1.18/kiss/qrimg
+            appid: wx6b8f675917712803
+            appsecret: 26f6b05149f9bb86d988793744b22849
+            url: https://api.weixin.qq.com/sns/jscode2session?appid=#APPID#&secret=#SECRET#&js_code=#JSCODE#&grant_type=authorization_code
+            machid: 1497311442
+            machsecret: cdf3da64c39e478999709f4476dea613
+            payurl: https://api.mch.weixin.qq.com/pay/unifiedorder
+            notifyurl: http://192.168.1.18/kiss/data/pay/program/notify
+            tokenurl: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=#APPID#&secret=#APPSECRET#
+            qrcode-wx: https://api.weixin.qq.com/wxa/getwxacode?access_token=#ACCESS_TOKEN#
+            qrcode-normal: https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token=#ACCESS_TOKEN#
+            qrcode-path: pages/index/index?code=#CODE#
+            qrcode-width: 430

@@ -1,0 +1,50 @@
+server:
+  port: 8080
+  context-path: /kiss/netty
+
+spring:
+  redis:
+    database: 0
+    host: 192.168.1.12
+    port: 6379
+    password: zjtachao
+    pool:
+      max-active: 20
+      max-idle: 10
+      max-wait: 100
+      min-idle: 1
+
+  datasource:
+    url: jdbc:mysql://192.168.1.11:3306/fish?useUnicode=true&characterEncoding=UTF-8
+    username: zjtachao
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 1
+      max-active: 10
+      min-idle: 1
+      max-wait: 50
+
+fish:
+  websocket:
+    address: ${FISH_SOCKET_ADDRESS}
+
+com:
+  zjtachao:
+    fish:
+      kiss:
+        netty:
+          tcp:
+            port: 7070
+          boss:
+            thread:
+              count: 2
+          worker:
+            thread:
+              count: 2
+          so:
+            keepalive:  true
+            backlog: 100
+          timeout:
+            all: 60

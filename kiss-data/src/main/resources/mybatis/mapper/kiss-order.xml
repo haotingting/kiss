@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjtachao.fish.kiss.data.mapper.KissOrderMapper" >
+    <resultMap id="orderResultMap" type="com.zjtachao.fish.kiss.common.bean.domain.KissOrder" >
+        <id column="ID" property="id" />
+        <result column="ORDER_NUMBER" property="orderNumber"  />
+        <result column="ORDER_TIME" property="orderTime"  />
+        <result column="STIE_CODE" property="stieCode" />
+        <result column="STIE_NAME" property="stieName" />
+        <result column="DEVICE_CODE" property="deviceCode"  />
+        <result column="DEVICE_SERIAL_NUMBER" property="deviceSerialNumber"  />
+        <result column="DEVICE_NAME" property="deviceName" />
+        <result column="PAY_WAY" property="payWay"  />
+        <result column="PAY_SOURCE" property="paySource"  />
+
+        <result column="PAY_NUMBER" property="payNumber"  />
+        <result column="PAY_CURRENCY" property="payCurrency"  />
+        <result column="PAY_GOODS" property="payGoods"  />
+        <result column="PAY_AMOUNT" property="payAmount"  />
+        <result column="PAY_QUANTITY" property="payQuantity"  />
+        <result column="PAY_TITLE" property="payTitle"  />
+        <result column="PAY_DESC" property="payDesc"  />
+        <result column="PAY_REMARK" property="payRemark"  />
+        <result column="PAY_STATUS" property="payStatus"  />
+        <result column="PAY_TIME" property="payTime"  />
+        <result column="PAY_BUYER_CODE" property="payBuyerCode"  />
+        <result column="PAY_BUYER_NAME" property="payBuyerName"  />
+        <result column="PAY_SELLER_CODE" property="paySellerCode"  />
+        <result column="PAY_SELLER_NAME" property="paySellerName"  />
+        <result column="ORDER_REMARK" property="orderRemark"  />
+
+        <result column="CREATE_TIME" property="createTime"  />
+        <result column="CREATE_ID" property="createId"  />
+        <result column="MODIFY_TIME" property="modifyTime"  />
+        <result column="MODIFY_ID" property="modifyId"  />
+        <result column="DELETE_FLAG" property="deleteFlag"  />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        ID, ORDER_NUMBER, ORDER_TIME , STIE_CODE, DEVICE_CODE,DEVICE_SERIAL_NUMBER,
+        (SELECT a.DEVICE_NAME FROM KF_DEVICE a WHERE 1=1 AND a.DEVICE_CODE = t.DEVICE_CODE) DEVICE_NAME,
+        (SELECT a.SITE_NAME FROM KF_SITE a WHERE 1=1 AND a.SITE_CODE = t.STIE_CODE) STIE_NAME,
+        PAY_WAY , PAY_SOURCE,
+        PAY_NUMBER,PAY_CURRENCY,PAY_GOODS,PAY_AMOUNT,PAY_QUANTITY,PAY_TITLE,
+        PAY_DESC,PAY_REMARK,PAY_STATUS,PAY_TIME,PAY_BUYER_CODE,PAY_BUYER_NAME,
+        PAY_SELLER_CODE,PAY_SELLER_NAME,ORDER_REMARK,
+        CREATE_TIME , CREATE_ID , MODIFY_TIME , MODIFY_ID ,DELETE_FLAG
+    </sql>
+
+    <insert id="addOrder" parameterType="com.zjtachao.fish.kiss.common.bean.domain.KissOrder" >
+        INSERT INTO
+        KF_ORDER_${tbDate}(ORDER_NUMBER, ORDER_TIME , STIE_CODE,
+         DEVICE_CODE , DEVICE_SERIAL_NUMBER, PAY_WAY , PAY_SOURCE ,
+         PAY_NUMBER , PAY_CURRENCY, PAY_GOODS, PAY_AMOUNT ,
+         PAY_QUANTITY , PAY_TITLE , PAY_DESC , PAY_REMARK ,
+         PAY_STATUS , PAY_TIME , PAY_BUYER_CODE , PAY_BUYER_NAME ,
+         PAY_SELLER_CODE , PAY_SELLER_NAME , ORDER_REMARK ,
+         CREATE_TIME  , MODIFY_TIME  ,DELETE_FLAG)
+        VALUES
+        (#{orderNumber} , #{orderTime} , #{stieCode} , #{deviceCode}  , #{deviceSerialNumber},
+        #{payWay} , #{paySource}, #{payNumber}, #{payCurrency}, #{payGoods}, #{payAmount} ,
+        #{payQuantity} , #{payTitle} , #{payDesc} , #{payRemark} , #{payStatus} , #{payTime},
+        #{payBuyerCode} , #{payBuyerName} , #{paySellerCode} , #{paySellerName} , #{orderRemark},
+         #{createTime} , #{modifyTime} , #{deleteFlag})
+    </insert>
+
+    <update id="updateOrderStatus" parameterType="com.zjtachao.fish.kiss.common.bean.domain.KissOrder" >
+        UPDATE
+        KF_ORDER_${tbDate}
+        SET
+        PAY_STATUS = #{payStatus} ,
+        PAY_TIME = #{payTime} ,
+        PAY_NUMBER = #{payNumber},
+        MODIFY_TIME = #{modifyTime}
+        WHERE 1=1
+        AND ORDER_NUMBER = #{orderNumber}
+        AND DELETE_FLAG = #{deleteFlag}
+    </update>
+
+
+    <select id="queryOrderByCode" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissOrderSo" resultMap="orderResultMap"  statementType="STATEMENT" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM KF_ORDER_${tbDate} t
+        WHERE 1=1
+        AND t.DELETE_FLAG = ${deleteFlag}
+        AND t.ORDER_NUMBER = ${orderNumber}
+    </select>
+
+
+
+</mapper>

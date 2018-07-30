@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjtachao.fish.kiss.data.mapper.KissGoodsMapper" >
+    <resultMap id="goodsResultMap" type="com.zjtachao.fish.kiss.common.bean.domain.KissGoods" >
+        <id column="ID" property="id" />
+        <result column="SITE_CODE" property="siteCode"  />
+        <result column="GOODS_TYPE" property="goodsType"  />
+        <result column="GOODS_CODE" property="goodsCode"  />
+        <result column="GOODS_NAME" property="goodsName" />
+        <result column="GOODS_PRICE" property="goodsPrice"  />
+        <result column="GOODS_UNIT" property="goodsUnit"  />
+        <result column="GOODS_DESC" property="goodsDesc"  />
+        <result column="GOODS_STATUS" property="goodsStatus"  />
+        <result column="GOODS_ORDER" property="goodsOrder"  />
+        <result column="REMARK" property="remark"  />
+        <result column="CREATE_TIME" property="createTime"  />
+        <result column="CREATE_ID" property="createId"  />
+        <result column="MODIFY_TIME" property="modifyTime"  />
+        <result column="MODIFY_ID" property="modifyId"  />
+        <result column="DELETE_FLAG" property="deleteFlag"  />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        ID, SITE_CODE, GOODS_TYPE, GOODS_CODE , GOODS_NAME, GOODS_PRICE, GOODS_UNIT , GOODS_DESC , GOODS_STATUS , GOODS_ORDER , REMARK,CREATE_TIME , CREATE_ID , MODIFY_TIME , MODIFY_ID ,DELETE_FLAG
+    </sql>
+
+
+    <select id="queryAllGoodsList" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissGoodsSo" resultMap="goodsResultMap" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM KF_GOODS t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        AND t.GOODS_STATUS = #{goodsStatus}
+        ORDER BY t.GOODS_ORDER ASC , t.MODIFY_TIME DESC,t.CREATE_TIME DESC
+    </select>
+
+    <select id="queryGoodsCount" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissGoodsSo" resultType="java.lang.Long" >
+        SELECT
+        COUNT(*)
+        FROM KF_GOODS t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        <if test="siteCode != null and siteCode != ''" >
+            AND t.SITE_CODE = #{siteCode}
+        </if>
+        <if test="goodsStatus != null and goodsStatus != ''" >
+            AND t.GOODS_STATUS = #{goodsStatus}
+        </if>
+        <if test="goodsName != null and goodsName != ''" >
+            AND t.GOODS_NAME LIKE CONCAT(CONCAT('%', #{goodsName}), '%')
+        </if>
+    </select>
+
+    <select id="queryGoodsList" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissGoodsSo" resultMap="goodsResultMap" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM KF_GOODS t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        <if test="siteCode != null and siteCode != ''" >
+            AND t.SITE_CODE = #{siteCode}
+        </if>
+        <if test="goodsStatus != null and goodsStatus != ''" >
+            AND t.GOODS_STATUS = #{goodsStatus}
+        </if>
+        <if test="goodsName != null and goodsName != ''" >
+            AND t.GOODS_NAME LIKE CONCAT(CONCAT('%', #{goodsName}), '%')
+        </if>
+        ORDER BY t.GOODS_ORDER ASC , t.MODIFY_TIME DESC,t.CREATE_TIME DESC
+        <if test="startNum != null and pageSize != null">
+            LIMIT #{startNum},#{pageSize}
+        </if>
+    </select>
+
+
+    <select id="queryGoodsByCode" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissGoodsSo" resultMap="goodsResultMap" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM KF_GOODS t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        AND t.GOODS_CODE = #{goodsCode}
+    </select>
+
+</mapper>

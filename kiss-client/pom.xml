@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.zjtachao.fish.kiss</groupId>
+	<artifactId>kiss-client</artifactId>
+	<version>1.0.0</version>
+
+	<!--
+	<modules>
+		<module>../kiss-common</module>
+	</modules>
+	-->
+
+	<name>kiss client</name>
+	<description>kiss client</description>
+
+	<parent>
+		<artifactId>water-boot-starter-parent</artifactId>
+		<groupId>com.zjtachao.fish.water</groupId>
+		<version>1.0.0</version>
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+
+		<com.zjtachao.fish.water.boot.stater.common.version>1.0.0</com.zjtachao.fish.water.boot.stater.common.version>
+
+		<docker.maven.plugin.version>1.0.0</docker.maven.plugin.version>
+
+		<docker.image.prefix>zjtachao/fish</docker.image.prefix>
+
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.zjtachao.fish.water</groupId>
+			<artifactId>water-boot-starter-common</artifactId>
+			<version>${com.zjtachao.fish.water.boot.stater.common.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.zjtachao.fish.kiss</groupId>
+			<artifactId>kiss-common</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+			<version>4.1.9.Final</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>com.zjtachao.fish.water.common.base.boot.WaterBootApplication</mainClass>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>${docker.maven.plugin.version}</version>
+				<configuration>
+					<imageName>${docker.image.prefix}/${project.artifactId}:${project.version}</imageName>
+					<dockerDirectory>src/main/docker</dockerDirectory>
+					<resources>
+						<resource>
+							<targetPath>/</targetPath>
+							<directory>${project.build.directory}</directory>
+							<include>${project.build.finalName}.jar</include>
+						</resource>
+					</resources>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

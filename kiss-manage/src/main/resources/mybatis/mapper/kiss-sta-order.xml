@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjtachao.fish.kiss.manage.mapper.KissStaOrderMapper" >
+    <resultMap id="staOrderMap" type="com.zjtachao.fish.kiss.common.bean.domain.KissStaOrder" >
+        <id column="ID" property="id" />
+        <result column="PERIOD_DAY" property="periodDay"  />
+        <result column="SITE_CODE" property="siteCode"  />
+        <result column="SITE_NAME" property="siteName"  />
+        <result column="DEVICE_SERIAL_NUMBER" property="deviceSerialNumber"  />
+        <result column="GOODS_CODE" property="goodsCode"  />
+        <result column="GOODS_NAME" property="goodsName"  />
+        <result column="PAY_WAY" property="payWay"  />
+        <result column="TOTAL_COUNT" property="totalCount"  />
+        <result column="TOTAL_AMOUNT" property="totalAmount"  />
+        <result column="CREATE_TIME" property="createTime"  />
+        <result column="CREATE_ID" property="createId"  />
+        <result column="MODIFY_TIME" property="modifyTime"  />
+        <result column="MODIFY_ID" property="modifyId"  />
+        <result column="DELETE_FLAG" property="deleteFlag"  />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        (SELECT SITE_NAME FROM KF_SITE s WHERE 1=1 AND s.SITE_CODE = t.SITE_CODE) SITE_NAME,
+        (SELECT GOODS_NAME FROM KF_GOODS g WHERE 1=1 AND g.GOODS_CODE = t.GOODS_CODE) GOODS_NAME,
+        ID, PERIOD_DAY, SITE_CODE , DEVICE_SERIAL_NUMBER , GOODS_CODE, PAY_WAY, TOTAL_COUNT , TOTAL_AMOUNT ,CREATE_TIME , CREATE_ID , MODIFY_TIME , MODIFY_ID ,DELETE_FLAG
+    </sql>
+
+    <sql id="Sta_Column_List" >
+        PERIOD_DAY, SUM(TOTAL_COUNT) AS TOTAL_COUNT , SUM(TOTAL_AMOUNT) AS TOTAL_AMOUNT
+    </sql>
+
+    <sql id="Sta_Column_Total_List" >
+        SUM(TOTAL_COUNT) AS TOTAL_COUNT , SUM(TOTAL_AMOUNT) AS TOTAL_AMOUNT
+    </sql>
+
+
+    <select id="queryStaOrderList" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissStaOrderSo" resultMap="staOrderMap" >
+        SELECT
+        <include refid="Sta_Column_List" />
+        FROM KF_STA_ORDER t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        <if test="minPeriodDay != null" >
+            AND t.PERIOD_DAY &gt;= #{minPeriodDay}
+        </if>
+        <if test="maxPeriodDay != null" >
+            AND t.PERIOD_DAY &lt;= #{maxPeriodDay}
+        </if>
+        <if test="siteCode != null and siteCode != ''" >
+            AND t.SITE_CODE = #{siteCode}
+        </if>
+        <if test="goodsCode != null and goodsCode != ''" >
+            AND t.GOODS_CODE = #{goodsCode}
+        </if>
+        <if test="deviceSerialNumber != null and deviceSerialNumber != ''" >
+            AND t.DEVICE_SERIAL_NUMBER = #{deviceSerialNumber}
+        </if>
+        <if test="payWay != null and payWay != ''" >
+            AND t.PAY_WAY = #{payWay}
+        </if>
+        GROUP BY t.PERIOD_DAY
+        ORDER BY t.PERIOD_DAY ASC
+    </select>
+
+
+    <select id="queryStaOrderTotal" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissStaOrderSo" resultMap="staOrderMap" >
+        SELECT
+        <include refid="Sta_Column_Total_List" />
+        FROM KF_STA_ORDER t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        <if test="siteCode != null and siteCode != ''" >
+            AND t.SITE_CODE = #{siteCode}
+        </if>
+        <if test="goodsCode != null and goodsCode != ''" >
+            AND t.GOODS_CODE = #{goodsCode}
+        </if>
+        <if test="deviceSerialNumber != null and deviceSerialNumber != ''" >
+            AND t.DEVICE_SERIAL_NUMBER = #{deviceSerialNumber}
+        </if>
+        <if test="payWay != null and payWay != ''" >
+            AND t.PAY_WAY = #{payWay}
+        </if>
+    </select>
+
+
+    <insert id="addStaOrder" parameterType="com.zjtachao.fish.kiss.common.bean.domain.KissStaOrder" >
+        INSERT INTO
+        KF_STA_ORDER(PERIOD_DAY , SITE_CODE , DEVICE_SERIAL_NUMBER , GOODS_CODE , PAY_WAY , TOTAL_COUNT , TOTAL_AMOUNT , CREATE_TIME  , MODIFY_TIME , DELETE_FLAG)
+        VALUES
+        (#{periodDay} , #{siteCode} , #{deviceSerialNumber} , #{goodsCode} , #{payWay}  , #{totalCount} , #{totalAmount}, #{createTime} , #{modifyTime} , #{deleteFlag})
+    </insert>
+
+
+    <update id="deleteStaOrder" parameterType="com.zjtachao.fish.kiss.common.bean.domain.KissStaOrder" >
+        UPDATE
+        KF_STA_ORDER
+        SET
+        DELETE_FLAG = #{deleteFlag},
+        MODIFY_TIME = #{modifyTime}
+        WHERE 1=1
+        AND PERIOD_DAY = #{periodDay}
+    </update>
+
+
+
+
+</mapper>

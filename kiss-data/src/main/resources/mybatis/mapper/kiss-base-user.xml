@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjtachao.fish.kiss.data.mapper.KissBaseUserMapper" >
+    <resultMap id="userResultMap" type="com.zjtachao.fish.kiss.common.bean.domain.KissBaseUser" >
+        <id column="ID" property="id" />
+        <result column="USER_CODE" property="userCode"  />
+        <result column="USER_OPENID" property="userOpenid"  />
+        <result column="USER_UNIONID" property="userUnionid" />
+        <result column="USER_MOBILE" property="userMobile"  />
+        <result column="USER_PWD" property="userPwd"  />
+        <result column="USER_NICKNAME" property="userNickname"  />
+        <result column="USER_HEADIMG" property="userHeadimg"  />
+        <result column="USER_REG_TIME" property="userRegTime"  />
+        <result column="USER_REG_TYPE" property="userRegType"  />
+        <result column="USER_LOGIN_TYPE" property="userLoginType"  />
+        <result column="USER_LOGIN_TIME" property="userLoginTime"  />
+        <result column="USER_STATUS" property="userStatus"  />
+        <result column="USER_ROLE" property="userRole"  />
+        <result column="CREATE_TIME" property="createTime"  />
+        <result column="CREATE_ID" property="createId"  />
+        <result column="MODIFY_TIME" property="modifyTime"  />
+        <result column="MODIFY_ID" property="modifyId"  />
+        <result column="DELETE_FLAG" property="deleteFlag"  />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        (SELECT a.ROLE_CODE FROM kf_user_role_rel a where 1=1 and a.DELETE_FLAG = #{deleteFlag} AND a.USER_CODE = t.USER_CODE LIMIT 0,1 ) USER_ROLE ,
+        ID, USER_CODE, USER_OPENID , USER_UNIONID, USER_MOBILE, USER_PWD, USER_NICKNAME, USER_HEADIMG, USER_REG_TIME, USER_REG_TYPE, USER_LOGIN_TYPE, USER_LOGIN_TIME,USER_STATUS,CREATE_TIME , CREATE_ID , MODIFY_TIME , MODIFY_ID ,DELETE_FLAG
+    </sql>
+
+    <select id="findBaseUserByPhone" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissBaseUserSo" resultMap="userResultMap" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM kf_base_user t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        AND t.USER_MOBILE = #{userMobile}
+
+    </select>
+
+    <select id="findBaseUserByOpenid" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissBaseUserSo" resultMap="userResultMap" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM kf_base_user t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        AND t.USER_OPENID = #{userOpenid}
+
+    </select>
+
+
+    <update id="updateBaseUserLoginInfo" parameterType="com.zjtachao.fish.kiss.common.bean.domain.KissBaseUser" >
+        UPDATE
+        kf_base_user
+        SET
+        USER_LOGIN_TYPE = #{userLoginType} ,
+        USER_LOGIN_TIME = #{userLoginTime} ,
+        MODIFY_TIME = #{modifyTime}
+        WHERE 1=1
+        AND USER_MOBILE = #{userMobile}
+        AND DELETE_FLAG = #{deleteFlag}
+    </update>
+
+    <update id="updateBaseUserNickname" parameterType="com.zjtachao.fish.kiss.common.bean.domain.KissBaseUser" >
+        UPDATE
+        kf_base_user
+        SET
+        USER_NICKNAME = #{userNickname} ,
+        USER_HEADIMG = #{userHeadimg} ,
+        MODIFY_TIME = #{modifyTime}
+        WHERE 1=1
+        AND USER_CODE = #{userCode}
+        AND DELETE_FLAG = #{deleteFlag}
+    </update>
+
+    <insert id="addUser" parameterType="com.zjtachao.fish.kiss.common.bean.domain.KissBaseUser" >
+        INSERT INTO
+        kf_base_user(USER_CODE , USER_OPENID , USER_UNIONID ,USER_REG_TIME , USER_REG_TYPE, USER_LOGIN_TYPE, USER_LOGIN_TIME, USER_STATUS,CREATE_TIME  , MODIFY_TIME , DELETE_FLAG)
+        VALUES
+        (#{userCode} , #{userOpenid} , #{userUnionid} , #{userRegTime}, #{userRegType}, #{userLoginType}, #{userLoginTime}, #{userStatus}, #{createTime} , #{modifyTime} , #{deleteFlag})
+    </insert>
+
+
+</mapper>

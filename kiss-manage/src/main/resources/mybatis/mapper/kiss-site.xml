@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjtachao.fish.kiss.manage.mapper.KissSiteMapper" >
+    <resultMap id="siteResultMap" type="com.zjtachao.fish.kiss.common.bean.domain.KissSite" >
+        <id column="ID" property="id" />
+        <result column="SITE_CODE" property="siteCode"  />
+        <result column="SITE_NAME" property="siteName"  />
+        <result column="AREA_PROVINCE" property="areaProvince" />
+        <result column="AREA_PROVINCE_NAME" property="areaProvinceName" />
+        <result column="AREA_CITY" property="areaCity"  />
+        <result column="AREA_CITY_NAME" property="areaCityName"  />
+        <result column="AREA_COUNTY" property="areaCounty"  />
+        <result column="AREA_COUNTY_NAME" property="areaCountyName"  />
+        <result column="AREA_DETAIL" property="areaDetail"  />
+        <result column="CREATE_TIME" property="createTime"  />
+        <result column="CREATE_ID" property="createId"  />
+        <result column="MODIFY_TIME" property="modifyTime"  />
+        <result column="MODIFY_ID" property="modifyId"  />
+        <result column="DELETE_FLAG" property="deleteFlag"  />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        (SELECT AREA_NAME FROM KF_PARAM_AREA a WHERE a.AREA_CODE = t.AREA_PROVINCE) AS AREA_PROVINCE_NAME,
+        (SELECT AREA_NAME FROM KF_PARAM_AREA a WHERE a.AREA_CODE = t.AREA_CITY) AS AREA_CITY_NAME,
+        (SELECT AREA_NAME FROM KF_PARAM_AREA a WHERE a.AREA_CODE = t.AREA_COUNTY) AS AREA_COUNTY_NAME,
+        ID, SITE_CODE, SITE_NAME , AREA_PROVINCE, AREA_CITY, AREA_COUNTY , AREA_DETAIL,CREATE_TIME , CREATE_ID , MODIFY_TIME , MODIFY_ID ,DELETE_FLAG
+    </sql>
+
+    <select id="querySiteByCode" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissSiteSo" resultMap="siteResultMap" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM KF_SITE t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        AND t.SITE_CODE = #{siteCode}
+    </select>
+
+    <select id="querySiteCount" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissSiteSo" resultType="java.lang.Long" >
+        SELECT
+            COUNT(*)
+        FROM KF_SITE t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        <if test="userRole != null and userRole != '' and (userRole == 'agent_admin' || userRole == 'site_admin')" >
+            AND t.SITE_CODE in (SELECT r.SITE_CODE FROM kf_user_site_rel r WHERE r.DELETE_FLAG = #{deleteFlag} AND r.USER_CODE = #{adminUserCode})
+        </if>
+        <if test="areaProvince != null and areaProvince != ''" >
+            AND t.AREA_PROVINCE = #{areaProvince}
+        </if>
+        <if test="areaCity != null and areaCity != ''" >
+            AND t.AREA_CITY = #{areaCity}
+        </if>
+        <if test="areaCounty != null and areaCounty != ''" >
+            AND t.AREA_COUNTY = #{areaCounty}
+        </if>
+        <if test="siteName != null and siteName != ''" >
+            AND t.SITE_NAME LIKE CONCAT(CONCAT('%', #{siteName}), '%')
+        </if>
+    </select>
+
+    <select id="querySiteList" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissSiteSo" resultMap="siteResultMap" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM KF_SITE t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        <if test="userRole != null and userRole != '' and (userRole == 'agent_admin' || userRole == 'site_admin')" >
+            AND t.SITE_CODE in (SELECT r.SITE_CODE FROM kf_user_site_rel r WHERE r.DELETE_FLAG = #{deleteFlag} AND r.USER_CODE = #{adminUserCode})
+        </if>
+        <if test="areaProvince != null and areaProvince != ''" >
+            AND t.AREA_PROVINCE = #{areaProvince}
+        </if>
+        <if test="areaCity != null and areaCity != ''" >
+            AND t.AREA_CITY = #{areaCity}
+        </if>
+        <if test="areaCounty != null and areaCounty != ''" >
+            AND t.AREA_COUNTY = #{areaCounty}
+        </if>
+        <if test="siteName != null and siteName != ''" >
+            AND t.SITE_NAME LIKE CONCAT(CONCAT('%', #{siteName}), '%')
+        </if>
+        ORDER BY t.MODIFY_TIME DESC,t.CREATE_TIME DESC
+        <if test="startNum != null and pageSize != null">
+            LIMIT #{startNum},#{pageSize}
+        </if>
+    </select>
+
+    <insert id="addSite" parameterType="com.zjtachao.fish.kiss.common.bean.domain.KissSite" >
+        INSERT INTO
+        KF_SITE(SITE_CODE , SITE_NAME , AREA_PROVINCE , AREA_CITY , AREA_COUNTY , AREA_DETAIL , CREATE_TIME  , MODIFY_TIME , DELETE_FLAG)
+        VALUES
+        (#{siteCode} , #{siteName} , #{areaProvince} , #{areaCity} , #{areaCounty}  , #{areaDetail} , #{createTime} , #{modifyTime} , #{deleteFlag})
+    </insert>
+
+    <update id="updateSite" parameterType="com.zjtachao.fish.kiss.common.bean.domain.KissSite" >
+        UPDATE
+          KF_SITE
+        SET
+          SITE_NAME = #{siteName} ,
+          AREA_PROVINCE = #{areaProvince},
+          AREA_CITY = #{areaCity} ,
+          AREA_COUNTY = #{areaCounty} ,
+          AREA_DETAIL = #{areaDetail} ,
+          MODIFY_TIME = #{modifyTime}
+        WHERE 1=1
+        AND SITE_CODE = #{siteCode}
+        AND DELETE_FLAG = #{deleteFlag}
+    </update>
+
+    <update id="deleteSite" parameterType="com.zjtachao.fish.kiss.common.bean.domain.KissSite" >
+        UPDATE
+        KF_SITE
+        SET
+          DELETE_FLAG = #{deleteFlag},
+          MODIFY_TIME = #{modifyTime}
+        WHERE 1=1
+        AND SITE_CODE = #{siteCode}
+    </update>
+
+
+
+</mapper>

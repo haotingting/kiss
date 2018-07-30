@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjtachao.fish.kiss.manage.mapper.KissParamAreaMapper" >
+    <resultMap id="paramAreaResultMap" type="com.zjtachao.fish.kiss.common.bean.domain.KissParamArea" >
+        <id column="ID" property="id" />
+        <result column="AREA_CODE" property="areaCode"  />
+        <result column="AREA_NAME" property="areaName"  />
+        <result column="PARENT_CODE" property="parentCode" />
+        <result column="AREA_LEVEL" property="areaLevel"  />
+        <result column="AREA_ORDER" property="areaOrder"  />
+        <result column="CREATE_TIME" property="createTime"  />
+        <result column="CREATE_ID" property="createId"  />
+        <result column="MODIFY_TIME" property="modifyTime"  />
+        <result column="MODIFY_ID" property="modifyId"  />
+        <result column="DELETE_FLAG" property="deleteFlag"  />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        ID, AREA_CODE, AREA_NAME , PARENT_CODE, AREA_LEVEL, AREA_ORDER,CREATE_TIME , CREATE_ID , MODIFY_TIME , MODIFY_ID ,DELETE_FLAG
+    </sql>
+
+    <select id="queryAllProvince" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissParamAreaSo" resultMap="paramAreaResultMap" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM KF_PARAM_AREA t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        AND t.AREA_LEVEL = 1
+        AND t.PARENT_CODE = 0
+        ORDER BY t.AREA_CODE ASC
+    </select>
+
+    <select id="queryCityByProvince" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissParamAreaSo" resultMap="paramAreaResultMap" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM KF_PARAM_AREA t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        AND t.PARENT_CODE = #{parentCode}
+        AND t.AREA_LEVEL = 2
+        ORDER BY t.AREA_CODE ASC
+    </select>
+
+    <select id="queryCountyByCity" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissParamAreaSo" resultMap="paramAreaResultMap" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM KF_PARAM_AREA t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        AND t.PARENT_CODE = #{parentCode}
+        AND t.AREA_LEVEL = 3
+        ORDER BY t.AREA_CODE ASC
+    </select>
+
+    <select id="queryAreaByLevel" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissParamAreaSo" resultMap="paramAreaResultMap" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM KF_PARAM_AREA t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        AND t.AREA_LEVEL = #{areaLevel}
+        ORDER BY t.AREA_CODE ASC
+    </select>
+
+
+</mapper>

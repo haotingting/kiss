@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+
+    <!-- param -->
+    <property name="PATTERN" value="%-12(%d{yyyy-MM-dd HH:mm:ss.SSS}) |-%-5level %c [%L] -| %msg%n" />
+    <!-- dev 文件路径 -->
+    <property name="DEV_FILE_PATH" value="/Users/duhao/tmp/" />
+    <!-- test 文件路径 -->
+    <property name="TEST_FILE_PATH" value="/data/logs/" />
+    <!-- prod 文件路径 -->
+    <property name="PROD_FILE_PATH" value="/data/logs/" />
+
+
+    <!-- dev -->
+    <springProfile name="dev">
+        <appender name="DEV-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${DEV_FILE_PATH}/kiss-netty.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${DEV_FILE_PATH}/kiss-netty.%d{yyyy-MM-dd_HH}.log</fileNamePattern>
+            </rollingPolicy>
+
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>${PATTERN}</pattern>
+            </layout>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="DEV-FILE" />
+        </root>
+
+    </springProfile>
+
+    <!-- test -->
+    <springProfile name="test">
+        <appender name="TEST-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${TEST_FILE_PATH}/kiss-netty.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${TEST_FILE_PATH}/kiss-netty.%d{yyyy-MM-dd_HH}.log</fileNamePattern>
+            </rollingPolicy>
+
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>${PATTERN}</pattern>
+            </layout>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="TEST-FILE" />
+        </root>
+
+    </springProfile>
+
+    <!-- prod -->
+    <springProfile name="prod">
+        <appender name="PROD-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${PROD_FILE_PATH}/kiss-netty.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${PROD_FILE_PATH}/kiss-netty.%d{yyyy-MM-dd_HH}.log</fileNamePattern>
+            </rollingPolicy>
+
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>${PATTERN}</pattern>
+            </layout>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="PROD-FILE" />
+        </root>
+
+    </springProfile>
+
+</configuration>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjtachao.fish.kiss.manage.mapper.KissPromoMapper" >
+    <resultMap id="promoResultMap" type="com.zjtachao.fish.kiss.common.bean.domain.KissPromo" >
+        <id column="ID" property="id" />
+        <result column="PROMO_CODE" property="promoCode"  />
+        <result column="SITE_CODE" property="siteCode"  />
+        <result column="SITE_NAME" property="siteName"  />
+        <result column="GOODS_CODE" property="goodsCode"  />
+        <result column="GOODS_NAME" property="goodsName"  />
+        <result column="START_TIME" property="startTime"  />
+        <result column="END_TIME" property="endTime" />
+        <result column="PROMO_STATUS" property="promoStatus"  />
+        <result column="USE_TIME" property="useTime"  />
+        <result column="USE_CODE" property="useCode"  />
+        <result column="CREATE_TIME" property="createTime"  />
+        <result column="CREATE_ID" property="createId"  />
+        <result column="MODIFY_TIME" property="modifyTime"  />
+        <result column="MODIFY_ID" property="modifyId"  />
+        <result column="DELETE_FLAG" property="deleteFlag"  />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        (SELECt SITE_NAME FROM KF_SITE s WHERE 1=1 AND s.SITE_CODE = t.SITE_CODE ) SITE_NAME,
+        (SELECt GOODS_NAME FROM KF_GOODS g WHERE 1=1 AND g.GOODS_CODE = t.GOODS_CODE ) GOODS_NAME,
+        ID, PROMO_CODE , SITE_CODE, GOODS_CODE , START_TIME, END_TIME, PROMO_STATUS , USE_TIME , USE_CODE ,CREATE_TIME , CREATE_ID , MODIFY_TIME , MODIFY_ID ,DELETE_FLAG
+    </sql>
+
+
+    <select id="queryPromoByCode" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissPromoSo" resultMap="promoResultMap" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM KF_PROMO t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        AND t.PROMO_CODE = (#{promoCode})
+    </select>
+
+
+    <select id="queryPromoCountByCodes" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissPromoSo" resultType="java.lang.Long" >
+        SELECT
+        COUNT(*)
+        FROM KF_PROMO t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        AND t.PROMO_CODE in(#{codes})
+    </select>
+
+    <select id="queryPromoCount" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissPromoSo" resultType="java.lang.Long" >
+        SELECT
+        COUNT(*)
+        FROM KF_PROMO t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        <if test="siteCode != null and siteCode != ''" >
+            AND t.SITE_CODE = #{siteCode}
+        </if>
+        <if test="goodsCode != null and goodsCode != ''" >
+            AND t.GOODS_CODE = #{goodsCode}
+        </if>
+        <if test="promoStatus != null" >
+            AND t.PROMO_STATUS = #{promoStatus}
+        </if>
+        <if test="valiStartTime != null" >
+            AND t.START_TIME &lt;= #{valiStartTime}
+        </if>
+        <if test="valiEndTime != null" >
+            AND t.END_TIME &gt;= #{valiEndTime}
+        </if>
+    </select>
+
+    <select id="queryPromoList" parameterType="com.zjtachao.fish.kiss.common.bean.so.KissPromoSo" resultMap="promoResultMap" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM KF_PROMO t
+        WHERE 1=1
+        AND t.DELETE_FLAG = #{deleteFlag}
+        <if test="siteCode != null and siteCode != ''" >
+            AND t.SITE_CODE = #{siteCode}
+        </if>
+        <if test="goodsCode != null and goodsCode != ''" >
+            AND t.GOODS_CODE = #{goodsCode}
+        </if>
+        <if test="promoStatus != null" >
+            AND t.PROMO_STATUS = #{promoStatus}
+        </if>
+        <if test="valiStartTime != null" >
+            AND t.START_TIME &lt;= #{valiStartTime}
+        </if>
+        <if test="valiEndTime != null" >
+            AND t.END_TIME &gt;= #{valiEndTime}
+        </if>
+        ORDER BY t.MODIFY_TIME DESC,t.CREATE_TIME DESC
+        <if test="startNum != null and pageSize != null">
+            LIMIT #{startNum},#{pageSize}
+        </if>
+    </select>
+
+    <insert id="addPromo" parameterType="com.zjtachao.fish.kiss.common.bean.domain.KissPromo" >
+        INSERT INTO
+        KF_PROMO(PROMO_CODE , SITE_CODE, GOODS_CODE , START_TIME, END_TIME, PROMO_STATUS ,CREATE_TIME  , MODIFY_TIME  ,DELETE_FLAG)
+        VALUES
+        (#{promoCode} , #{siteCode} , #{goodsCode} , #{startTime} ,#{endTime} , #{promoStatus}, #{createTime} , #{modifyTime} , #{deleteFlag})
+    </insert>
+
+    <update id="deletePromo" parameterType="com.zjtachao.fish.kiss.common.bean.domain.KissPromo" >
+        UPDATE
+        KF_PROMO
+        SET
+          DELETE_FLAG = #{deleteFlag},
+          MODIFY_TIME = #{modifyTime}
+        WHERE 1=1
+        AND PROMO_CODE = #{promoCode}
+    </update>
+
+
+
+</mapper>
